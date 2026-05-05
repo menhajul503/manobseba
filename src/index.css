@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-slate-900 antialiased min-h-screen font-sans;
+}
+
+button,
+input,
+select,
+textarea {
+  @apply outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-surface;
+}
+
+::selection {
+  background-color: #54a4d1;
+  color: #ffffff;
+}
