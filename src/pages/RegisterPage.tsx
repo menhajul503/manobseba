@@ -14,10 +14,14 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      await registerApi(form);
+      const data = await registerApi(form);
+      localStorage.setItem('ms_token', data.token);
+      localStorage.setItem('ms_user', JSON.stringify(data.user));
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed.');
+      const response = err.response?.data;
+      const validationErrors = response?.errors ? Object.values(response.errors).flat().join(' ') : null;
+      setError(validationErrors || response?.message || 'Registration failed.');
     } finally {
       setSubmitting(false);
     }

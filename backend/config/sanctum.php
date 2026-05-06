@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:5173')),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:4176,127.0.0.1:4176,localhost:5173,127.0.0.1:5173')),
 
     'expiration' => null,
 
