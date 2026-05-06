@@ -1,61 +1,46 @@
-import { useMemo, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Topbar from './components/Topbar';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DashboardLayout from './components/DashboardLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ServicesPage from './pages/ServicesPage';
+import ContactPage from './pages/ContactPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import AdminDashboard from './pages/AdminDashboard';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import MemberManagement from './pages/MemberManagement';
 import DonationsPage from './pages/DonationsPage';
-import DistributionPage from './pages/DistributionPage';
-import NoticesPage from './pages/NoticesPage';
-import LoginPage from './pages/LoginPage';
-
-const routeTitles: Record<string, string> = {
-  '/admin/dashboard': 'Dashboard',
-  '/admin/members': 'Member Management',
-  '/admin/donations': 'Donations',
-  '/admin/distributions': 'Distributions',
-  '/admin/notices': 'Notices',
-  '/user': 'My Dashboard'
-};
-
-function DashboardLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-
-  const pageTitle = useMemo(() => {
-    const base = Object.keys(routeTitles).find((path) => location.pathname.startsWith(path));
-    return base ? routeTitles[base] : 'Manobseba';
-  }, [location.pathname]);
-
-  return (
-    <div className="min-h-screen bg-surface text-slate-900">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} role="admin" />
-
-      <div className="lg:pl-72">
-        <Topbar title={pageTitle} onMobileMenu={() => setSidebarOpen(true)} />
-        <main className="px-4 pb-10 pt-4 sm:px-6 lg:px-8">
-          <Routes>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/members" element={<MemberManagement />} />
-            <Route path="/admin/donations" element={<DonationsPage />} />
-            <Route path="/admin/distributions" element={<DistributionPage />} />
-            <Route path="/admin/notices" element={<NoticesPage />} />
-            <Route path="/user" element={<UserDashboard />} />
-            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-          </Routes>
-        </main>
-      </div>
-    </div>
-  );
-}
+import TransactionsPage from './pages/TransactionsPage';
+import DashboardRedirect from './pages/DashboardRedirect';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/*" element={<DashboardLayout />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route
+          path="/dashboard/*"
+          element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
+        >
+          <Route index element={<DashboardRedirect />} />
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="super" element={<SuperAdminDashboard />} />
+          <Route path="user" element={<UserDashboard />} />
+          <Route path="members" element={<MemberManagement />} />
+          <Route path="donations" element={<DonationsPage />} />
+          <Route path="transactions" element={<TransactionsPage />} />
+        </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

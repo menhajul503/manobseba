@@ -1,15 +1,28 @@
 import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Globe } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { login as loginApi } from '../api/auth';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate('/admin/dashboard');
+    setError('');
+    setSubmitting(true);
+
+    try {
+      const data = await loginApi(form);
+      localStorage.setItem('ms_token', data.token);
+      localStorage.setItem('ms_user', JSON.stringify(data.user));
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -17,51 +30,45 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_30px_80px_rgba(47,143,126,0.12)]">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[24px] bg-primary text-3xl font-semibold text-white">M</div>
-          <h1 className="text-3xl font-semibold text-slate-900">Manobseba Group</h1>
-          <p className="mt-2 text-sm text-slate-500">Access the village charity fund dashboard with ease.</p>
+          <h1 className="text-3xl font-semibold text-slate-900">ManobSheba Login</h1>
+          <p className="mt-2 text-sm text-slate-500">Access the village charity fund dashboard with secure token authentication.</p>
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700" htmlFor="username">Email / Username</label>
-            <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20">
-              <Mail className="h-5 w-5 text-slate-400" />
-              <input
-                id="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="Enter email or username"
-                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
-              />
-            </div>
+            <label className="text-sm font-medium text-slate-700" htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={form.email}
+              onChange={(event) => setForm({ ...form, email: event.target.value })}
+              placeholder="Enter your email"
+              className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700" htmlFor="password">Password</label>
-            <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20">
-              <Lock className="h-5 w-5 text-slate-400" />
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter your password"
-                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
-              />
-            </div>
+            <input
+              id="password"
+              type="password"
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              placeholder="Enter your password"
+              className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
           </div>
 
-          <button className="w-full rounded-3xl bg-primary py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#276d64]" type="submit">
-            Login
+          {error && <p className="rounded-3xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
+
+          <button className="w-full rounded-3xl bg-primary py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#276d64] disabled:opacity-70" type="submit" disabled={submitting}>
+            {submitting ? 'Logging in…' : 'Login'}
           </button>
         </form>
 
-        <div className="mt-6 flex items-center justify-between text-sm text-slate-500">
-          <button className="inline-flex items-center gap-2 rounded-3xl bg-slate-50 px-4 py-2 text-slate-600 shadow-sm"> 
-            <Globe className="h-4 w-4" /> বাংলা
-          </button>
-          <button className="text-primary font-semibold">Forgot password?</button>
-        </div>
+        <p className="mt-6 text-center text-sm text-slate-500">
+          Don’t have an account? <Link to="/register" className="font-semibold text-primary">Create one</Link>
+        </p>
       </div>
     </div>
   );

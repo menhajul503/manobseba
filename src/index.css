@@ -25,3 +25,17 @@ textarea {
   background-color: #54a4d1;
   color: #ffffff;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  animation: marquee 18s linear infinite;
+}

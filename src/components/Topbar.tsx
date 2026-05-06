@@ -3,9 +3,10 @@ import { Bell, Menu, Search, UserCircle } from 'lucide-react';
 type TopbarProps = {
   title: string;
   onMobileMenu: () => void;
+  onLogout: () => void;
 };
 
-export default function Topbar({ title, onMobileMenu }: TopbarProps) {
+export default function Topbar({ title, onMobileMenu, onLogout }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-surface/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -26,9 +27,12 @@ export default function Topbar({ title, onMobileMenu }: TopbarProps) {
           <button className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-700 shadow-sm">
             <Bell className="h-5 w-5" />
           </button>
-          <button className="inline-flex items-center gap-3 rounded-3xl bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm">
+          <button
+            onClick={onLogout}
+            className="inline-flex items-center gap-2 rounded-3xl bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm"
+          >
             <UserCircle className="h-5 w-5 text-primary" />
-            <span>সমীর</span>
+            Logout
           </button>
         </div>
       </div>

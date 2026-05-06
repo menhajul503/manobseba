@@ -4,26 +4,32 @@ import { Bell, Home, Layers, Package, Users2 } from 'lucide-react';
 type SidebarProps = {
   open: boolean;
   onClose: () => void;
-  role: 'admin' | 'user';
+  role: 'super_admin' | 'sub_admin' | 'admin' | 'user';
 };
 
+const superAdminMenu = [
+  { label: 'Overview', to: '/dashboard/super', icon: Home },
+  { label: 'Users', to: '/dashboard/members', icon: Users2 },
+  { label: 'Donations', to: '/dashboard/donations', icon: Layers },
+  { label: 'Transactions', to: '/dashboard/transactions', icon: Package },
+  { label: 'Reports', to: '/dashboard/admin', icon: Bell }
+];
+
 const adminMenu = [
-  { label: 'Dashboard', to: '/admin/dashboard', icon: Home },
-  { label: 'Members', to: '/admin/members', icon: Users2 },
-  { label: 'Donations', to: '/admin/donations', icon: Layers },
-  { label: 'Distributions', to: '/admin/distributions', icon: Package },
-  { label: 'Notices', to: '/admin/notices', icon: Bell }
+  { label: 'Overview', to: '/dashboard/admin', icon: Home },
+  { label: 'Members', to: '/dashboard/members', icon: Users2 },
+  { label: 'Donations', to: '/dashboard/donations', icon: Layers },
+  { label: 'Transactions', to: '/dashboard/transactions', icon: Package },
 ];
 
 const userMenu = [
-  { label: 'My Dashboard', to: '/user', icon: Home },
-  { label: 'Donations', to: '/admin/donations', icon: Layers },
-  { label: 'Distributions', to: '/admin/distributions', icon: Package },
-  { label: 'Notices', to: '/admin/notices', icon: Bell }
+  { label: 'My Dashboard', to: '/dashboard/user', icon: Home },
+  { label: 'Donations', to: '/dashboard/donations', icon: Layers },
+  { label: 'Transactions', to: '/dashboard/transactions', icon: Package },
 ];
 
 export default function Sidebar({ open, onClose, role }: SidebarProps) {
-  const menuItems = role === 'admin' ? adminMenu : userMenu;
+  const menuItems = role === 'super_admin' ? superAdminMenu : role === 'sub_admin' || role === 'admin' ? adminMenu : userMenu;
 
   return (
     <aside>
